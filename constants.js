@@ -11,3 +11,5 @@ module.exports.STATUS = {
     SERVER_ERROR: 500,
     TOO_MANY_REQUESTS: 429,
   };
+
+  module.exports.POST_LIMIT = 50

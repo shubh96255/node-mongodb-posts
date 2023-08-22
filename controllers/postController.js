@@ -1,34 +1,58 @@
 const mongoose = require("mongoose");
 const express = require("express");
 const router = express.Router();
-const multer = require('multer');
-const path = require('path');
-const storage = multer.diskStorage({
-  destination: './uploads/',
-  filename: (req, file, cb) => {
-    console.log({file})
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
-const upload = multer({ storage });
+const postService = require("../services/postService");
 
 const postController = {
   addPost: async (req, res) => {
     try {
-   // const { description } = req.body;
-   // const imageUrl = req.image;
-
-    console.log({description : req.body});
-    return res.send("here")
-     
+      const userId = req.user.userId;
+      const postData = {
+        description : req.body.description,
+        image : req.file.filename,
+        uploadedBy : userId
+      }
+      await postService.createPost(postData);
+      return res.status(200).json({ message: 'Post added successfully' });
     } catch (error) {
       console.error('An error occurred addPost:', error);
       return res.status(500).json({ message: 'Something went wrong' });
     }
   },
-  
+
+  getPost: async (req, res) => {
+    try {
+      const projection = {description:1, image:1,uploadedBy:1}
+      const allPosts =  await postService.getPost(req,projection);
+      return res.status(200).json({ message: 'Post list' , posts:allPosts});
+    } catch (error) {
+      console.error('An error occurred addPost:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  },
+
+  likeDislike: async (req, res) => {
+    try {
+      const {_id,action} = req.body;
+      const userId = req.user.userId;
+
+      let likeQuery = {};
+      let returnMessage = {}; 
+      if(action === "like"){
+        likeQuery = { $addToSet: { likedBy: userId } };
+        returnMessage = { message: 'Post liked'};
+      }else{
+        likeQuery = { $pull: { likedBy: userId } };
+        returnMessage = { message: 'Post disliked'};
+      }
+      await postService.likeDislike(_id,likeQuery);
+      return res.status(200).json({...returnMessage});
+    } catch (error) {
+      console.error('An error occurred addPost:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  },
  
-  // Add more controller methods as needed
 };
 
 module.exports = postController;
