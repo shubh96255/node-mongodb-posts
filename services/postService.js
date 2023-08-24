@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Post = require("../models/Post");
+const PostComment = require("../models/PostComments");
 const perPage = require("../constants").POST_LIMIT;
 
 /* function is used to add a new user */
@@ -44,9 +45,23 @@ async function likeDislike(_id,likeQuery){
   return Post.findByIdAndUpdate(_id,likeQuery,{ new: true })
 }
 
+async function addComment(data){
+    return PostComment.create(data)
+}
+
+async function getComments(query){
+    return PostComment.find(query)
+        .select('postId comment userId')
+        .populate({
+           path: 'userId',
+           select: '_id username',
+        }).lean();
+}
 
 module.exports = {
     createPost,
     getPost,
-    likeDislike
+    likeDislike,
+    addComment,
+    getComments
 }

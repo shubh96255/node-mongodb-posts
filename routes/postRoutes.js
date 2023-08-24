@@ -5,9 +5,9 @@ const bodyParser = require('body-parser');
 const verifyToken = require('../helpers/verifyToken'); 
 router.use(verifyToken);
 
-var multer = require('multer');
+const multer = require('multer');
 const path = require('path');
-var storage = multer.diskStorage({
+const storage = multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, 'uploads/posts')
     },
@@ -24,5 +24,7 @@ router.use(bodyParser.json());
 router.post('/add-post',upload.single('imageFile') ,postController.addPost);
 router.get('/get-post',postController.getPost);
 router.post('/like-dislike-post',postController.likeDislike);
+router.post('/add-comment',postController.addComment);
+router.get('/get-comments',postController.getComments);
 
 module.exports = router;

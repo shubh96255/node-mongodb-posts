@@ -52,6 +52,33 @@ const postController = {
       return res.status(500).json({ message: 'Something went wrong' });
     }
   },
+
+  addComment: async (req, res) => {
+    try {
+      const dataToInsert = {
+        postId : req.body._id,
+        comment : req.body.comment,
+        userId : req.user.userId
+      };
+      await postService.addComment(dataToInsert);
+      return res.status(200).json({message : "Comment added"});
+    } catch (error) {
+      console.error('An error occurred addPost:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  },
+
+  getComments: async (req,res) => {
+    try {
+      const {_id} = req.query;
+      const commentsQuery = {postId : _id, status : "active"};
+      const allComments =  await postService.getComments(commentsQuery);
+      return res.status(200).json({ message: 'Comments list' , comments:allComments});
+    } catch (error) {
+      console.error('An error occurred getComments:', error);
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
  
 };
 
