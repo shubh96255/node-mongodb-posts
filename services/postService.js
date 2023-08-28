@@ -11,7 +11,14 @@ async function createPost(data){
 async function getPost(req,projection){
     const page = parseInt(req.query.page) || 1; 
     const loggedInUserId = req.user.userId;
+    let query = {};
+    if(req.query?.userId){
+        query.uploadedBy = req.query.userId;
+    }
     return Post.aggregate([
+        {
+            $match : query
+        },
         {
             $lookup: {
                 from: 'users',
@@ -22,7 +29,6 @@ async function getPost(req,projection){
         },
         {
             $addFields: {
-                uploadedBy: { $arrayElemAt: ['$uploadedBy.username', 0] },
                 isLikedByUser: { $in: [loggedInUserId, "$likedBy"] },
                 totalLikes : {$size : "$likedBy"}
             }
@@ -32,9 +38,11 @@ async function getPost(req,projection){
                 _id: 1,
                 description: 1,
                 image: 1,
-                uploadedBy: 1,
+                "uploadedBy.username": 1,
+                "uploadedBy._id": 1,
                 totalLikes: 1,
-                isLikedByUser: 1
+                isLikedByUser: 1,
+                createdAt :1
             }
         }
     ])

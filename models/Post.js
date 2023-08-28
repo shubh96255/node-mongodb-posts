@@ -13,6 +13,7 @@ const postSchema = new mongoose.Schema({
     ref: 'User'
   }],
   status : {type: String,enum: ['active', "deleted"],default: 'active'},
+  createdAt: { type: Date, default: Date.now }
 });
 
 const Post = mongoose.model('Post', postSchema);

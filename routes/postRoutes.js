@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 const verifyToken = require('../helpers/verifyToken'); 
 router.use(verifyToken);
 
+const validator = require("../validators/postValidator");
+router.use(validator);
+
 const multer = require('multer');
 const path = require('path');
 const storage = multer.diskStorage({

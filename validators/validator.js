@@ -1,5 +1,6 @@
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 const { STATUS } = require("../constants");
-console.log({STATUS})
 module.exports = function validator(req, res, next, model) {
   try {
     // Get the route model as Model
@@ -64,6 +65,9 @@ module.exports = function validator(req, res, next, model) {
           // expand as needed
           // console.log(expected_type.name);
           try {
+            if(expected_type.name == 'ObjectId'){
+              input_value = new model_param.type(data_source[key]);
+            }
             if (expected_type == Date) {
               input_value = new model_param.type(data_source[key]);
             } else if (expected_type == String) {
@@ -75,7 +79,7 @@ module.exports = function validator(req, res, next, model) {
                 : input_value === "false"
                 ? (input_value = false)
                 : (input_value = null);
-            } else if (expected_type == Number || expected_type == String || expected_type.name == "ObjectID") {
+            } else if (expected_type == Number || expected_type == String ) {
               input_value = model_param.type(data_source[key]);
             }
           } catch (e) {
