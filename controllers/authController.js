@@ -18,19 +18,18 @@ const taskController = {
       }
       //const generateOtp = Math.floor(1000 + Math.random() * 9000);
       const generateOtp = "5555";
-      /*if(verifyType === "email"){
-      //TODO:  send email create a common function 
+      if(verifyType === "email"){
       const transporter = nodemailer.createTransport({
-          host: 'smtp.ethereal.email',
-          port: 587,
+          host: process.env.SMTP_HOST,
+          port: process.env.SMTP_PORT,
           auth: {
-              user: 'mellie27@ethereal.email',
-              pass: 'zRHVHwVCjcbvwEYbVg'
+              user: process.env.SMTP_USER,
+              pass: process.env.SMTP_PASSWORD
           }
         });
 
         const mailOptions = {
-            from: 'todoom@todoom.com',
+            from: process.env.FROM_EMAIL,
             to: verify,
             subject: 'OTP to verify your account',
             text: `OTP to verify your account is:${generateOtp}`
@@ -42,7 +41,7 @@ const taskController = {
                 console.log('Email sent:', info.response);
             }
         });
-      }*/
+      }
 
       const checkOtpExistQuery = {verifyType,verify};
       const checkOtpExist = await authService.checkExist(checkOtpExistQuery);
